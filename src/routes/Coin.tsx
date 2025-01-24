@@ -136,6 +136,7 @@ interface IPriceDate {
 
 function Coin() {
   const { coinId } = useParams();
+  console.log("Current coinId:", coinId);
   const location = useLocation();
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
