@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import {
   Link,
   Route,
@@ -138,20 +137,31 @@ interface IPriceDate {
 function Coin() {
   const { coinId } = useParams();
   const location = useLocation();
-  const state = location.state as RouterState | null;
-  const name = state?.name;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch("/:coinId/chart");
+
+  const state = location.state as RouterState | null;
+  const name = state?.name;
+
   const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>({
     queryKey: ["info", coinId],
-    queryFn: () => fetchCoinInfo(coinId),
+    queryFn: () => fetchCoinInfo(coinId || ""),
+    enabled: !!coinId,
   });
+
   const { isLoading: priceLoading, data: priceData } = useQuery<IPriceDate>({
     queryKey: ["price", coinId],
-    queryFn: () => fetchCoinTickers(coinId),
+    queryFn: () => fetchCoinTickers(coinId || ""),
     refetchInterval: 10000,
+    enabled: !!coinId,
   });
+
   const loading = infoLoading || priceLoading;
+
+  if (!coinId) {
+    return <div>Error: Coin ID is missing</div>; // 또는 다른 오류 처리 방법
+  }
+
   return (
     <Container>
       <Link to="/">&larr; Back</Link>
